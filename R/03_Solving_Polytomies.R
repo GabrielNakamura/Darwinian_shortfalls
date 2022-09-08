@@ -13,5 +13,30 @@ source(here::here("R", "functions", "function_parallel_bifurctr.R"))
 
 
 # solving polytomies (Sunplin method Rangel et al) ------------------------
-system.time(phylo_solve_100_marine <- bifurcatr_parallel(tree = phy_marine, runs = 5, parallel = 3)
-)
+phylo_solve_100_marine <- bifurcatr_parallel(tree = phy_marine, runs = 5, parallel = 3)
+
+
+# Darwinian shortfall for all trees ---------------------------------------
+
+# calculating for all phylogenetic trees 
+Darwinian_shortfall_marine <- 
+  lapply(phylo_solve_100_marine, function(x){
+  FishPhyloMaker::PD_deficit(phylo = x, 
+                             data = insertions_marine, 
+                             level = c("Congeneric_insertion", 
+                                       "Family_insertion",
+                                       "Order_insertion")
+  )
+}
+) 
+
+deficits_all <- do.call(rbind, Darwinian_shortfall_marine)
+
+# base tree with polytomies
+Darwinian_shortfall_marine_base <- 
+  FishPhyloMaker::PD_deficit(phylo = res_phylo_marine$Phylogeny, 
+                             data = insertions_marine, 
+                             level = c("Congeneric_insertion", 
+                                       "Family_insertion",
+                                       "Order_insertion")
+  )
