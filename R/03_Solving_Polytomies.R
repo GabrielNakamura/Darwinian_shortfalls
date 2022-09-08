@@ -1,19 +1,17 @@
-library(ape)
 
+# Data, libraries and functions ------------------------------------------------------
+library(ape)
+library(FishPhyloMaker)
+
+# Data
 res_phylo_marine <- readRDS(here::here("output", "phylo_marine.rds"))
 phy_marine <- res_phylo_marine$Phylogeny
 insertions_marine <- res_phylo_marine$Insertions_data
 
-
-devtools::install_github("davidnipperess/PDcalc",build_vignettes = TRUE)
-library(PDcalc)
-
-help(package = "PDcalc")
-phy_marine
+# functions
+source(here::here("R", "functions", "function_parallel_bifurctr.R"))
 
 
-test <- bifurcatr_2(phy = phy_marine, runs = 2)
-
-lsf.str("package:PDcalc")
-quartz()
-plot(test[[1]])
+# solving polytomies (Sunplin method Rangel et al) ------------------------
+system.time(phylo_solve_100_marine <- bifurcatr_parallel(tree = phy_marine, runs = 5, parallel = 3)
+)
