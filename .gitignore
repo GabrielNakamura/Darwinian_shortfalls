@@ -37,3 +37,7 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# Large R files in output  
+output/*.rds
+output/images/*.png
