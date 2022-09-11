@@ -2,6 +2,8 @@
 # data and library --------------------------------------------------------
 
 library(phyloregion)
+library(rfishbase)
+library(rredlist)
 spp_df <- read.table(here::here("data", "taxa_table.txt"), header = TRUE) # species cleaned
 res_phylo_marine <- readRDS(file = here::here("output", "phylo_marine.rds"))
 
@@ -20,6 +22,3 @@ status_df_spp <- cons_status_spp_fb[which(is.na(match(spp_df$s, unique(gsub(" ",
 
 data(africa)
 y <- EDGE(x=africa$IUCN, phy=africa$phylo, Redlist="IUCN", species="Species")
-?evol_distinct
-?EDGE
-install.packages("rredlist")
