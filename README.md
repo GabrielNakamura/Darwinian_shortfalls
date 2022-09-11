@@ -4,12 +4,12 @@
 # Darwinian Shortfalls
 
 This repository contains all data, scripts and functions to the
-manuscript “Darwinian Shortfalls in Fishes”
+manuscript “Darwinian Shortfall in Fishes”
 
 # Repository structure
 
 This repository contains the full data to reproduce the analysis and
-figures present in the manuscript “Darwinian Shortfalls in Fishes”
+figures present in the manuscript “Darwinian Shortfall in Fishes”
 
 ## Folders
 
@@ -37,3 +37,19 @@ clone it:
 to unzip the .zip file in your computer type
 
 `unzip(zipfile = "MS_DarwinianShortfallFish.zip")`
+
+# Tasks
+
+-   Use a single phylogeny
+    -   [ ] Modify FishPhyloMaker or use rtrees
+-   Update figures
+    -   [x] Absolute Barplot for Orders
+    -   [ ] Stacked barplot for Orders
+    -   [x] Phylogenies and insertions for Marine and Fresh
+    -   [ ] Single Phylogeny
+-   Metrics
+    -   [x] Shorfalls using pseudo posterior distributions
+    -   [ ] Edge for all data
+    -   [x] Script for EDGE
+    -   [x] Request API from IUCN
+    -   [ ] Possibility to use data from FB
