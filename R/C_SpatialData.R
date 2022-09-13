@@ -17,8 +17,9 @@ shp_fresh <- sf::read_sf(here::here("data", "shp_fresh_FEOW"), as_tibble = T)
 
 class(occ_all$decimalLatitude)
 occ_test <- data.frame(occ_all[1:500, ])
-occ_test <- transform(occ_test, decimalLatitude = as.numeric(occ_test$decimalLatitude), decimalLongitude = as.numeric(occ_test$decimalLongitude))
-
+occ_test <- transform(occ_all, decimalLatitude = as.numeric(occ_all$decimalLatitude), decimalLongitude = as.numeric(occ_all$decimalLongitude))
+class(occ_test$decimalLatitude)
+rm(occ_test)
 # cleaning coordinates ----------------------------------------------------
 
 #select columns of interest
@@ -47,15 +48,26 @@ flags <- clean_coordinates(x = dat,
                            tests = c("capitals", "centroids", "equal","gbif", "institutions",
                                      "zeros", "countries")) # most test are on by default
 
+saveRDS(object = flags, file = here("data", "flags_coord.rds"))
+
+# removing flagged occs
+
+dat_cl <- dat[-unique(which(flags$.zer == FALSE), 
+                which(flags$.val == FALSE), 
+                which(flags$.gbf == FALSE),
+                which(flags$.inst == FALSE), 
+                which(flags$.equ == FALSE),
+                which(flags$.cap == FALSE)), ]
+saveRDS(dat_cl, file = here("data", "processed", "dat_cl_test.rds"))
 
 # intersection ecoregions and species occurrences -------------------------------------
 
 # converting points to spatial points
-points_test <- st_as_sf(x = dat, coords = c("decimalLongitude", "decimalLatitude")) 
+points_test <- st_as_sf(x = dat_cl, coords = c("decimalLongitude", "decimalLatitude")) 
 
-st_crs(points_test) <- st_crs(shp_marine) # atributing same projection to points
+st_crs(points_test) <- st_crs(shp_marine) # same projection to points and shp
 
-intersection_marine <- st_intersection(x = shp_marine, y = points_test)
+intersection_marine_test <- st_intersection(x = shp_marine, y = points_test) # all perciformes in marine ecoregions
 
 
 # exploring shp for marine and fresh --------------------------------------

@@ -4,19 +4,36 @@
 library(phyloregion)
 library(rfishbase)
 library(rredlist)
+library(tidyverse)
+
 spp_df <- read.table(here::here("data", "taxa_table.txt"), header = TRUE) # species cleaned
 res_phylo_marine <- readRDS(file = here::here("output", "phylo_marine.rds"))
 
 phylo_marine <- res_phylo_marine$Phylogeny
-db_fishbase <- species() 
+insertions_marine <- res_phylo_marine$Insertions_data
 
 
+# getting IUCN data -----------------------------------------------------------
 
-# cleaning data -----------------------------------------------------------
+Sys.getenv("IUCN_KEY") # API key for IUCN - saved as a system var - cant see here in local env
+apikey <- Sys.getenv("IUCN_KEY") # calling the token number from system
 
-cons_status <- db_fishbase$Vulnerability # check if this can be used as a proxy for IUCN endangered categories
-cons_status_spp_fb <- db_fishbase[which(is.na(cons_status) != TRUE), ]
-status_df_spp <- cons_status_spp_fb[which(is.na(match(spp_df$s, unique(gsub(" ", "_", cons_status_spp_fb$Species)))) != TRUE), "Vulnerability"]
+df_species_names <- data.frame(species_name = insertions_marine$s)
+
+# make a data frame of the species you want to iterate over
+df_iucn_search <- 
+  df_species_names %>% # now apply the rl_search function to each species using purrr::map()
+  mutate(iucn_pull = map(species_name, rl_search, key = apikey)
+         ) 
+
+
+# cleaning results from Iucn
+
+api_clean <- df %>% 
+  mutate(category = map_chr(iucn_pull, pluck, "result", "category")) %>% 
+  select(species_names, category)
+
+
 
 # calculate EDGE ----------------------------------------------------------
 

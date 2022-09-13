@@ -43,3 +43,5 @@ output/*.rds
 output/images/*.png
 data/gbif_occ_allActino.csv
 data/occ_perciformes.csv
+data/flags_coord.rds
+data/processed/dat_cl_test.rds
