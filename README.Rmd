@@ -49,14 +49,14 @@ to unzip the .zip file in your computer type
     - [X] Absolute Barplot for Orders 
     - [ ] Stacked barplot for Orders
     - [X] Phylogenies and insertions for Marine and Fresh
-    - [ ] Single Phylogeny
+    - [X] Single Phylogeny
 
 - Metrics 
     - [X] Shorfalls using pseudo posterior distributions 
     - [ ] Edge for all data
     - [X] Script for EDGE
     - [X] Request API from IUCN
-    - [ ] Possibility to use data from FB
+    - [X] Possibility to use data from FB
     
 - Possible improvements
     - [ ] Use the availability of molecular data check [Rentrez package](https://cran.r-project.org/web/packages/rentrez/vignettes/rentrez_tutorial.html) and [Rudbeck et al paper](https://onlinelibrary.wiley.com/doi/full/10.1111/ecog.06142)

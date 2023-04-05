@@ -4,18 +4,17 @@ library(ape)
 library(FishPhyloMaker)
 
 # Data
-res_phylo_marine <- readRDS(here::here("output", "phylo_marine.rds"))
-phy_marine <- res_phylo_marine$Phylogeny
-insertions_marine <- res_phylo_marine$Insertions_data
+p <- readRDS(here::here("output", "tree_graft_final.rds")) # phylogenetic tree
+i <- readRDS(here::here("output", "data_insertion.rds")) # data with insertions
 
 # functions
-source(here::here("R", "functions", "function_parallel_bifurctr.R"))
+source(here::here("R", "functions", "function_parallel_bifurctr.R")) # function to solve politomies
 
 
 # solving polytomies (Sunplin method Rangel et al) ------------------------
-phylo_solve_1000_marine <- bifurcatr_parallel(tree = phy_marine,
-                                             runs = 1000,
-                                             parallel = 6)
+phylo_solve <- bifurcatr_parallel(tree = p, 
+                                  runs = 1000, 
+                                  parallel = 4)
 saveRDS(object = phylo_solve_1000_marine, file = here::here("output", "1000_trees_marine.rds"))
 
 # Darwinian shortfall for all trees ---------------------------------------
@@ -43,4 +42,5 @@ Darwinian_shortfall_marine_base <-
                                        "Family_insertion",
                                        "Order_insertion")
   )
+
 

@@ -45,3 +45,6 @@ data/gbif_occ_allActino.csv
 data/occ_perciformes.csv
 data/flags_coord.rds
 data/processed/dat_cl_test.rds
+data/raw/occ_perciformes.csv
+data/raw/gbif_occ_allActino.csv
+data/shp_fresh_tedesco

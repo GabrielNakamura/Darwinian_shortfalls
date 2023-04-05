@@ -15,9 +15,8 @@ shp_marine <- sf::read_sf(here::here("data", "shp_marine_MEOW"), as_tibble = T)
 # shp_fresh <- sf::read_sf(here::here("data", "shp_freshBasin"), as_tibble = T)
 shp_fresh <- sf::read_sf(here::here("data", "shp_fresh_FEOW"), as_tibble = T)
 
-class(occ_all$decimalLatitude)
-occ_test <- data.frame(occ_all[1:500, ])
-occ_test <- transform(occ_all, decimalLatitude = as.numeric(occ_all$decimalLatitude), decimalLongitude = as.numeric(occ_all$decimalLongitude))
+occ_test <- transform(occ_all, decimalLatitude = as.numeric(occ_all$decimalLatitude),
+                      decimalLongitude = as.numeric(occ_all$decimalLongitude)) # transforming lat and long in numerical
 class(occ_test$decimalLatitude)
 rm(occ_test)
 # cleaning coordinates ----------------------------------------------------

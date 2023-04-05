@@ -25,8 +25,9 @@ names(spp) <- families$name
 spp <- lapply(spp, function(x) gsub(" ", "_", x))
 
 
+
 # naming families with more than one species phylogeny
-not_samp_families <- names(unlist(lapply(spp, function(x) which(length(x) == 0)))) # fdmilies not sampled in phylogeny
+not_samp_families <- names(unlist(lapply(spp, function(x) which(length(x) == 0)))) # families not sampled in phylogeny
 monotip_families <-  names(unlist(lapply(spp, function(x) which(length(x) == 1)))) # monotipic families in the tree
 one_spp <- c(not_samp_families, monotip_families)
 family_names_tree <- spp[-match(one_spp, names(spp))]
@@ -37,6 +38,10 @@ position_family <-
 for(i in 1:length(position_family)){ # naming tree nodes
   tree$node.label[position_family[[i]] - ape::Ntip(tree)] <- names(position_family)[i]
 }
+
+match(extract.clade(phy = tree, node = tree$node.label[position_family[[i]] - ape::Ntip(tree)])$tip.label, family_names_tree$Zoarcidae)
+data[which(data$f == "Zoarcidae"), ]
+which(tree$tip.label == "Azygopterus_corallinus")
 
 # adding fake species to name monotipic families in backbone tree
 tree <- phytools::force.ultrametric(tree)
@@ -75,11 +80,6 @@ data_insertion[match(spp_in_tree, data_insertion$s), "insertion"] <- "present in
 # congeneric grafting ----------------------------------------------------
 
 tree_update_genus <- tree_update
-pb_congeneric <- progress::progress_bar$new(format = "Adding congeneric species [:bar] :percent", 
-                                            total = length(insert_genus), clear = FALSE, 
-                                            width = 60, current = "<", incomplete = ">", 
-                                            complete = ">")
-
 data_genus <- data[-which(data$s %in% spp_in_tree == TRUE), ]
 genus_data <- sub("_.*", "", data_genus$s)
 genus_tree <- sub("_.*", "", tree_update_genus$tip.label)
@@ -277,7 +277,7 @@ data_insertion[which(is.na(data_insertion$insertion) == TRUE), "insertion"] <- "
 
 # saving the trees and table --------------------------------------------------------
 
-saveRDS(tree_update_order, here::here("tree_graft_final.rds"))
-saveRDS(data_insertion, here::here("data_insertion.rds"))
+saveRDS(tree_final, here::here("output", "tree_graft_final.rds"))
+saveRDS(data_insertion, here::here("output", "data_insertion.rds"))
 
 (table(data_insertion$insertion))/(sum(table(data_insertion$insertion))) * 100 # summary of insertion procedure
