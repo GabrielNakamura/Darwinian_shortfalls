@@ -39,7 +39,9 @@ vignettes/*.pdf
 .Renviron
 
 # Large files in output  
-output/*.rds
+output/1000_trees_marine.rds
+output/data_insertion.rds
+output/phylo_marine.rds
 output/images/*.png
 data/gbif_occ_allActino.csv
 data/occ_perciformes.csv
