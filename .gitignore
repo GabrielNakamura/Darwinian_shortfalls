@@ -38,7 +38,7 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
-# Large R files in output  
+# Large files in output  
 output/*.rds
 output/images/*.png
 data/gbif_occ_allActino.csv
@@ -47,4 +47,16 @@ data/flags_coord.rds
 data/processed/dat_cl_test.rds
 data/raw/occ_perciformes.csv
 data/raw/gbif_occ_allActino.csv
+data/processed/abundance_MEOW.csv
+data/processed/filtered_occ.csv
+data/processed/Fish_pruned.csv
+
+# Spatial objects
 data/shp_fresh_tedesco
+data/shp_marine_MEOW/
+data/shp_fresh_FEOW/
+data/grid_200/
+
+# Doc files 
+doc/
+output/MS_spatiallyMap_darwinian.docx

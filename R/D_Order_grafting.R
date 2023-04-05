@@ -7,19 +7,21 @@ library(tidytree)
 # list of species 
 data <- read.table(here::here("data", "taxa_table.txt"), header = T) # data from fishbase containing all valid names of fish species
 species <- data$s # only species names
-?rtrees::sp_list_df()
+
 
 
 # getting the tree up to family level using rtrees 
 sp_tree <- rtrees::get_tree(sp_list = species, taxon = 'fish', scenario = 'at_basal_node') # phylo object
 tb_tree <- as_tibble(sp_tree) # tibble obj
 
-tb_graft <- sp_tree$graft_status
-colnames(tb_graft)[1] <- "label"
+tb_graft <- sp_tree$graft_status # status of insertion
+
+
+
 tb_tree_graft <- 
   dplyr::full_join(tb_tree, tb_graft, by = "label") %>% 
   as.treedata()
-no_family <- tb_tree_graft@data[which(tb_tree_graft@data$status == "skipped as no co-family in the megatree"), ]
+no_family <- tb_tree_graft@data[which(tb_tree_graft@data$status == "skipped as no co-family in the megatree"), ] # no species in megatree
 
 
 # adding species at order level
