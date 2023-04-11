@@ -3,20 +3,63 @@
 # reading libraries
 library(rtrees)
 library(tidytree)
+library(ape)
+library(phytools)
 
 # list of species 
 data <- read.table(here::here("data", "taxa_table.txt"), header = T) # data from fishbase containing all valid names of fish species
 species <- data$s # only species names
-
+head(data)
 
 
 # grafting species up to family level -------------------------------------
 
+genus <- unlist(lapply(strsplit(x = data$s, split = "_"), function(x) x[[1]]))
+data$genus <- genus
+data.new <- data.frame(species = data$s, genus = data$genus, family = data$f)
+head(data.new)
+
 # getting the tree up to family level using rtrees 
-sp_tree <- rtrees::get_tree(sp_list = species, taxon = 'fish', scenario = 'at_basal_node') # phylo object
+sp_tree <- rtrees::get_tree(sp_list = data.new, taxon = 'fish',
+                            scenario = 'at_basal_node') # phylo object
+sp_tree
+
+# pegando os clados
+unique(data.new$family) == "Characidae"
+
+test <- subset(data.new, family == "Characidae")
+
+sum(is.na(match(test$species, sp_tree$tip.label)))
+
+sub.tree <- extract.clade(sp_tree, findMRCA(sp_tree, tips = test$species))
+
+chara_tree <- data.new[match(sub.tree$tip.label, data.new$species), ]
+chara_tree[which(chara_tree$family != "Characidae"), ]
+unique(chara_tree$family)
+
+
+tree_rabo <- read.tree("C:\\Users\\Bine\\OneDrive - UFRGS\\Manuscritos\\URGS_etal\\Soares_etal_BIOCON\\actinopt_full.trees")
+rabo.tree <- tree_rabo[[1]]
+
+test2 <- test[-which(is.na(match(test$species, rabo.tree$tip.label)) == TRUE),]
+
+sub.tree.rabo <- extract.clade(rabo.tree, findMRCA(rabo.tree, tips = test2$species))
+
+chara_tree <- data.new[match(sub.tree.rabo$tip.label, data.new$species), ]
+chara_tree[which(chara_tree$family != "Characidae"), ]
+unique(chara_tree$family)
+
+chara_tree <- data.new[match(sub.tree$tip.label, data.new$species), ]
+chara_tree[which(chara_tree$family != "Characidae"), ]
+unique(chara_tree$family)
+
+#########################
+
 tb_tree <- as_tibble(sp_tree) # tibble obj
 
 tb_graft <- sp_tree$graft_status # status of insertion
+table(tb_graft$status)
+
 
 tb_tree_graft <- 
   dplyr::full_join(tb_tree, tb_graft, by = "label") %>% 
