@@ -13,16 +13,15 @@ knitr::opts_chunk$set(
 
 # Darwinian Shortfalls
 
-This repository contains all data, scripts and functions to the manuscript "Darwinian Shortfall in Fishes"
+This repository contains all data, scripts and functions to the manuscript "Quantifying and overcoming Darwinian shortfalls to conserve the fish tree of life" in review in Biological Conservation
 
 # Repository structure
-This repository contains the full data to reproduce the analysis and figures present in the manuscript "Darwinian Shortfall in Fishes"
 
 ## Folders 
 
 - data: contains all data needed to perform the analysis
 
-- doc: .doc documents containing the manuscript describing the package
+- doc: .doc documents containing the manuscript describing the analysis and data proccessing
 
 - output: contains all results, including figures and .rds files generated with archives contained in R folder that starts with letters D and S
 
@@ -41,24 +40,4 @@ to unzip the .zip file in your computer type
 `unzip(zipfile = "MS_DarwinianShortfallFish.zip")`
 
 # Tasks 
-
-- Use a single phylogeny
-    - [ ] Modify FishPhyloMaker or use rtrees 
-    
-- Update figures
-    - [X] Absolute Barplot for Orders 
-    - [ ] Stacked barplot for Orders
-    - [X] Phylogenies and insertions for Marine and Fresh
-    - [X] Single Phylogeny
-
-- Metrics 
-    - [X] Shorfalls using pseudo posterior distributions 
-    - [ ] Edge for all data
-    - [X] Script for EDGE
-    - [X] Request API from IUCN
-    - [X] Possibility to use data from FB
-    
-- Possible improvements
-    - [ ] Use the availability of molecular data check [Rentrez package](https://cran.r-project.org/web/packages/rentrez/vignettes/rentrez_tutorial.html) and [Rudbeck et al paper](https://onlinelibrary.wiley.com/doi/full/10.1111/ecog.06142)
-    - [ ] Project Darwinian shortfall in space using meaningful scale (watershed for freshwater and realms for marine?)
 

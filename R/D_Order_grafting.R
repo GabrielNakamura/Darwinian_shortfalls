@@ -86,11 +86,12 @@ tb_graft[which(tb_graft$status == "skipped as no co-family in the megatree"), "s
 table(tb_graft$status)
 tb_graft[which(tb_graft$status == "not inserted"), "species"]
 
-data[match(tb_graft[which(tb_graft$status == "not inserted"), "species"]$species, data$s), ]
+data[match(tb_graft[which(tb_graft$status == "not inserted"), "species"]$species, data$s), ] # not grafted at any level
 
 # saving trees and insertion table ----------------------------------------
 
 saveRDS(object = as.phylo(tb_tree), here::here("output", "family_tree.rds")) 
 saveRDS(object = tree_update_order, here::here("output", "order_tree.rds"))
 saveRDS(object = tb_graft, here::here("output", "graft_table.rds"))
+
 
