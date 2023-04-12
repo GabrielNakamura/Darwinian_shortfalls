@@ -8,63 +8,24 @@ library(phytools)
 
 # list of species 
 data <- read.table(here::here("data", "taxa_table.txt"), header = T) # data from fishbase containing all valid names of fish species
-species <- data$s # only species names
-head(data)
-
 
 # grafting species up to family level -------------------------------------
 
 genus <- unlist(lapply(strsplit(x = data$s, split = "_"), function(x) x[[1]]))
 data$genus <- genus
-data.new <- data.frame(species = data$s, genus = data$genus, family = data$f)
-head(data.new)
+data_new <- data.frame(species = data$s, genus = data$genus, family = data$f) # data formated accordingly to rtrees required format
 
 # getting the tree up to family level using rtrees 
-sp_tree <- rtrees::get_tree(sp_list = data.new, taxon = 'fish',
+sp_tree <- rtrees::get_tree(sp_list = data_new, taxon = 'fish',
                             scenario = 'at_basal_node') # phylo object
-sp_tree
 
-# pegando os clados
-unique(data.new$family) == "Characidae"
-
-test <- subset(data.new, family == "Characidae")
-
-sum(is.na(match(test$species, sp_tree$tip.label)))
-
-sub.tree <- extract.clade(sp_tree, findMRCA(sp_tree, tips = test$species))
-
-chara_tree <- data.new[match(sub.tree$tip.label, data.new$species), ]
-chara_tree[which(chara_tree$family != "Characidae"), ]
-unique(chara_tree$family)
-
-
-tree_rabo <- read.tree("C:\\Users\\Bine\\OneDrive - UFRGS\\Manuscritos\\URGS_etal\\Soares_etal_BIOCON\\actinopt_full.trees")
-rabo.tree <- tree_rabo[[1]]
-
-test2 <- test[-which(is.na(match(test$species, rabo.tree$tip.label)) == TRUE),]
-
-sub.tree.rabo <- extract.clade(rabo.tree, findMRCA(rabo.tree, tips = test2$species))
-
-chara_tree <- data.new[match(sub.tree.rabo$tip.label, data.new$species), ]
-chara_tree[which(chara_tree$family != "Characidae"), ]
-unique(chara_tree$family)
-
-chara_tree <- data.new[match(sub.tree$tip.label, data.new$species), ]
-chara_tree[which(chara_tree$family != "Characidae"), ]
-unique(chara_tree$family)
-
-#########################
 
 tb_tree <- as_tibble(sp_tree) # tibble obj
-
 tb_graft <- sp_tree$graft_status # status of insertion
-table(tb_graft$status)
 
 
-tb_tree_graft <- 
-  dplyr::full_join(tb_tree, tb_graft, by = "label") %>% 
-  as.treedata()
-no_family <- tb_tree_graft@data[which(tb_tree_graft@data$status == "skipped as no co-family in the megatree"), ] # no species in megatree
+no_family <- sp_tree$graft_status[which(sp_tree$graft_status$status == "skipped as no co-family in the megatree"), "species"]
+no_family <- as.vector(no_family)
 
 
 # getting species and nodes to be added at order level --------------------
@@ -79,11 +40,12 @@ names(spp_order) <- orders_no_incertae$name
 spp_order <- lapply(spp_order, function(x) gsub(" ", "_", x))
 
 # getting all node position for orders
+# mrca_order_node <- lapply(spp_order, function(x) phytools::findMRCA(sp_tree, tips = x))
 mrca_order_node <- lapply(spp_order, function(x) tidytree::MRCA(tb_tree, c(tb_tree[na.omit(match(x, tb_tree$label)), "label"])[[1]])) 
+
 
 # species with no co-family in phylogenetic tree
 data_not_family <- data[match(no_family$species, data$s), ]
-data_not_family <- data_not_family[-which(data_not_family$o == "Incertae sedis in Eupercaria"), ]
 
 # getting the nodes for each order of species to be inserted
 data_order <- mrca_order_node[na.omit(match(names(table(data_not_family$o)), names(mrca_order_node)))]
@@ -96,7 +58,7 @@ order_node_info$NameCheckOrd <- names(unlist(data_order_node)) # data frame with
 # grafting species --------------------------------------------------------
 
 tree_update_order <- as.phylo(tb_tree)
-tree_update_order <- phytools::force.ultrametric(tree_update_order, method = "extend")
+tree_update_order <- phytools::force.ultrametric(tree_update_order, method = "extend") # this take some time 
 
 # just a bar progress
 pb_order <- progress::progress_bar$new(format = "Adding species to order nodes [:bar] :percent", 
@@ -120,6 +82,11 @@ for(i in 1:dim(order_node_info)[1]){
 
 pos <- match(order_node_info$s, tb_graft$species)
 tb_graft[pos, "status"] <- "grafted at order level"
+tb_graft[which(tb_graft$status == "skipped as no co-family in the megatree"), "status"] <- "not inserted"
+table(tb_graft$status)
+tb_graft[which(tb_graft$status == "not inserted"), "species"]
+
+data[match(tb_graft[which(tb_graft$status == "not inserted"), "species"]$species, data$s), ]
 
 # saving trees and insertion table ----------------------------------------
 
