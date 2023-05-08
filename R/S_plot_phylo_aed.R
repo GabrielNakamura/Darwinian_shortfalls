@@ -11,7 +11,7 @@ library(dplyr)
 
 # data
 phy <- ape::read.tree(here::here("data", "phylo_final.tre"))
-aed <- read.table(here::here("data", "aed_final.txt"))
+aed <- read.table(here::here("data", "processed", "aed_final.txt"))
 names_spp <- rownames(aed)[match(phy$tip.label, rownames(aed))]
 # aed <- rnorm(length(phy$tip.label))
 cut_depth <- 110 # where the phylogeny is gonna be collapsed to be plotted
