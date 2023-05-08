@@ -11,12 +11,13 @@ library(fuzzyjoin)
 
 # reading data ------------------------------------------------------------
 
-ed_all <- read.table(here("data", "aed.txt"))
+ed_all <- read.table(here("data", "aed_final.txt"))
 df_ed_all <- data.frame(species = rownames(ed_all), 
-                        vulnerability = ed_all$vuln_final.Vulnerability)
+                        vulnerability = ed_all$x)
 insertion_spp <- readRDS(here::here("output", "data_insertion.rds"))
-shortfall_countries <- read.csv(here("data", "processed", "countries_insertion.csv"))
+shortfall_countries <- read.table(here("data", "pd_gdp.txt"), header = TRUE)
 colnames(shortfall_countries)[1] <- "name_long"
+shortfall_countries[, "name_long"] <- gsub(shortfall_countries$name_long, pattern = "_", replacement = " ")
 countries <- ne_countries()
 sf_countries <- st_as_sf(countries)
 sf_countries <- st_transform(sf_countries, 
@@ -38,8 +39,21 @@ sf_insertion_fuzzy <- stringdist_join(x = sf_insertion, y = shortfall_countries,
 
 names_sf <- sf_insertion$name_long[which(is.na(match(sf_insertion$name_long, shortfall_countries$name_long)) == TRUE)]
 
-shortfall_countries[which(shortfall_countries$name_long == "Bosnia Herzegov."), "name_long"] <- sort(names_sf)[1]
-shortfall_countries[which(shortfall_countries$name_long == "Brunei Darsm "), "name_long"] <- sort(names_sf)[2]
+
+shortfall_countries[grep("Congo", shortfall_countries$name_long), "name_long"] <- names_sf[5] # Congo
+shortfall_countries[grep("Bahamas", shortfall_countries$name_long), "name_long"] <- names_sf[3] # Bahamas
+shortfall_countries[grep("Côte", shortfall_countries$name_long), "name_long"] <- names_sf[4] # Cote de Ivoire
+shortfall_countries[grep("Czech", shortfall_countries$name_long), "name_long"] <- names_sf[8]
+shortfall_countries[grep("Egypt", shortfall_countries$name_long), "name_long"] <- names_sf[10]
+shortfall_countries[grep("Gambia", shortfall_countries$name_long), "name_long"] <- names_sf[13]
+shortfall_countries[grep("Iran", shortfall_countries$name_long), "name_long"] <- names_sf[14]
+shortfall_countries[grep("Kyrgyz", shortfall_countries$name_long), "name_long"]  <- names_sf[15]
+shortfall_countries[grep("Korea", shortfall_countries$name_long), "name_long"]  <- names_sf[16]
+shortfall_countries[grep("Sudan", shortfall_countries$name_long), "name_long"] <- names_sf[23]
+shortfall_countries[grep("Sudan", shortfall_countries$name_long), "name_long"] <- names_sf[23]
+shortfall_countries[grep("Turki", shortfall_countries$name_long), "name_long"] <- names_sf[29]
+shortfall_countries[grep("Yemen", shortfall_countries$name_long), "name_long"] <- names_sf[32]
+
 shortfall_countries[which(shortfall_countries$name_long == "Central African Republic"), "name_long"] <- sort(names_sf)[3]
 shortfall_countries[which(shortfall_countries$name_long == "Cote d'Ivoire"), "name_long"] <- sort(names_sf)[4]
 shortfall_countries[which(shortfall_countries$name_long == "Czechia"), "name_long"] <- sort(names_sf)[5]
@@ -68,6 +82,7 @@ shortfall_countries[which(shortfall_countries$name_long == "Viet Nam"), "name_lo
 shortfall_countries[which(shortfall_countries$name_long == "West Sahara"), "name_long"] <- sort(names_sf)[28]
 shortfall_countries[which(shortfall_countries$name_long == "West Sahara"), "name_long"] <- sort(names_sf)[29]
 
+# binding data again
 sf_insertion <- 
   sf_countries %>% 
   left_join(shortfall_countries, by = "name_long")
@@ -79,7 +94,7 @@ sf_insertion <-
 quartz()
 map_PD_deficit_wrld <- ggplot() +
   geom_sf(data = sf_insertion, aes(geometry = geometry, 
-                                   fill = PD_deficit),
+                                   fill = PD_Deficit),
           color = "transparent", size = 0.1, na.rm = T) +
   rcartocolor::scale_fill_carto_c(palette = "Teal", 
                                   direction = 1, 
@@ -181,6 +196,9 @@ cowplot::plot_grid(map_PD_deficit_wrld + theme(legend.position = "right"),
 
 # saving Figures ----------------------------------------------------------
 
+ggsave(filename = here("output", "images", "deficit_world.png"), 
+       plot = map_PD_deficit_wrld, device = "png",
+       dpi = 300, width = 9, height = 5)
 ggsave(filename = here("output", "images", "deficit_world.pdf"), 
        plot = plot_compose_deficit, device = "pdf",
        dpi = 300, width = 9, height = 5)
